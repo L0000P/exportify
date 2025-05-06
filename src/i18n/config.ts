@@ -11,38 +11,8 @@ i18n
       escapeValue: false,
     },
     resources: {
-      de: {
-        translations: require('./locales/de/translation.json')
-      },
       en: {
         translations: require('./locales/en/translation.json')
-      },
-      es: {
-        translations: require('./locales/es/translation.json')
-      },
-      fr: {
-        translations: require('./locales/fr/translation.json')
-      },
-      it: {
-        translations: require('./locales/it/translation.json')
-      },
-      nl: {
-        translations: require('./locales/nl/translation.json')
-      },
-      pt: {
-        translations: require('./locales/pt/translation.json')
-      },
-      sv: {
-        translations: require('./locales/sv/translation.json')
-      },
-      ar: {
-        translations: require('./locales/ar/translation.json')
-      },
-      ja: {
-        translations: require('./locales/ja/translation.json')
-      },
-      tr: {
-        translations: require('./locales/tr/translation.json')
       }
     },
     ns: ['translations'],

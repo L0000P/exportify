@@ -52,20 +52,40 @@ class TracksCsvFile {
     })
   }
 
-  content(): string {
-    let csvContent = ''
-
-    csvContent += this.columnNames.map(this.sanitize).join() + "\n"
-
-    this.lineTrackData.forEach((lineTrackData, trackId) => {
-      csvContent += lineTrackData.map(this.sanitize).join(",") + "\n"
-    })
-
-    return csvContent
+  sanitize(value: string): string {
+    // Aggiunge virgolette attorno al valore e rimpiazza eventuali virgolette doppie con due virgolette doppie
+    return '"' + String(value).replace(/"/g, '""') + '"'
   }
 
-  sanitize(string: string): string {
-    return '"' + String(string).replace(/"/g, '""') + '"'
+  content(): string {
+    const today = new Date().toISOString().split('T')[0]; // Ottieni la data odierna in formato YYYY-MM-DD
+    const header = ['date', 'position', 'song', 'artist', 'popularity', 'duration_ms', 'album_type', 'total_tracks', 'release_date', 'is_explicit', 'album_cover_url'];
+    let csvContent = header.join(",") + "\n"; // Aggiungi l'header al CSV
+
+    this.lineTrackData.forEach((lineTrackData, index) => {
+        const position = index + 1; // Posizione del brano nella playlist
+
+        // Estrai i campi richiesti
+        const [
+            song, // Nome della canzone
+            artist, // Nome dell'artista
+            popularity, // Popolarità
+            duration_ms, // Durata in millisecondi
+            album_type, // Tipo di album
+            total_tracks, // Numero totale di tracce nell'album
+            release_date, // Data di rilascio
+            is_explicit, // Esplicito (true/false)
+            album_cover_url // URL della copertina dell'album
+        ] = lineTrackData;
+
+        // Aggiungi la data e la posizione
+        const lineWithDate = [today, position, song, artist, popularity, duration_ms, album_type, total_tracks, release_date, is_explicit, album_cover_url];
+
+        // Aggiungi la riga al contenuto CSV
+        csvContent += lineWithDate.map(value => this.sanitize(String(value))).join(",") + "\n";
+    });
+
+    return csvContent;
   }
 }
 
