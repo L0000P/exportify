@@ -52,44 +52,60 @@ class TracksCsvFile {
     })
   }
 
-  sanitize(value: string): string {
-    // Aggiunge virgolette attorno al valore e rimpiazza eventuali virgolette doppie con due virgolette doppie
-    return '"' + String(value).replace(/"/g, '""') + '"'
+  sanitize(value: string, index: number): string {
+    // Non mettere mai virgolette al campo artist (indice 3)
+    if (index === 3) return value;
+    // Solo se contiene virgole o apici
+    if (value.includes(",") || value.includes('"')) {
+        return '"' + value.replace(/"/g, '""') + '"';
+    }
+    return value;
   }
 
   content(): string {
-    const today = new Date().toISOString().split('T')[0]; // Ottieni la data odierna in formato YYYY-MM-DD
-    const header = ['date', 'position', 'song', 'artist', 'popularity', 'duration_ms', 'album_type', 'total_tracks', 'release_date', 'is_explicit', 'album_cover_url'];
-    let csvContent = header.join(",") + "\n"; // Aggiungi l'header al CSV
+    const today = new Date().toISOString().split('T')[0];
+    const header = [
+        'date','position','song','artist','popularity','duration_ms','album_type','total_tracks','release_date','is_explicit'
+    ];
+    let csvContent = header.join(",") + "\n";
 
     this.lineTrackData.forEach((lineTrackData, index) => {
-        const position = index + 1; // Posizione del brano nella playlist
-
-        // Estrai i campi richiesti
+        const position = index + 1;
         const [
-            song, // Nome della canzone
-            artist, // Nome dell'artista
-            popularity, // Popolarità
-            duration_ms, // Durata in millisecondi
-            album_type, // Tipo di album
-            total_tracks, // Numero totale di tracce nell'album
-            release_date, // Data di rilascio
-            is_explicit, // Esplicito (true/false)
-            album_cover_url // URL della copertina dell'album
+            song,
+            artist,
+            popularity,
+            duration_ms,
+            album_type,
+            total_tracks,
+            release_date,
+            is_explicit
         ] = lineTrackData;
 
-        // Aggiungi la data e la posizione
-        const lineWithDate = [today, position, song, artist, popularity, duration_ms, album_type, total_tracks, release_date, is_explicit, album_cover_url];
+        // Costruisci la riga rispettando i tipi
+        const lineWithDate = [
+            today,
+            position,
+            song,
+            artist,
+            popularity,
+            duration_ms,
+            album_type,
+            total_tracks,
+            release_date,
+            is_explicit
+        ];
 
-        // Aggiungi la riga al contenuto CSV
-        csvContent += lineWithDate.map(value => this.sanitize(String(value))).join(",") + "\n";
+        csvContent += lineWithDate.map((value, i) => {
+            if (i === 1 || i === 4 || i === 5 || i === 7 || i === 9) return value;
+            return typeof value === "string" ? this.sanitize(value, i) : value;
+        }).join(",") + "\n";
     });
 
     return csvContent;
   }
 }
 
-// Handles exporting a single playlist as a CSV file
 class PlaylistExporter {
   accessToken: string
   playlist: any
@@ -114,7 +130,6 @@ class PlaylistExporter {
     const tracks = items.map(i => i.track)
     const tracksCsvFile = new TracksCsvFile(this.playlist, items)
 
-    // Add base data before existing (item) data, for backward compatibility
     await tracksCsvFile.addData(tracksBaseData, true)
 
     if (this.config.includeArtistsData) {

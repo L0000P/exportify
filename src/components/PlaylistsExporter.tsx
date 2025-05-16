@@ -18,7 +18,6 @@ interface PlaylistsExporterProps extends WithTranslation {
   onPlaylistsExportDone: () => void
 }
 
-// Handles exporting all playlist data as a zip file
 class PlaylistsExporter extends React.Component<PlaylistsExporterProps> {
   state = {
     exporting: false

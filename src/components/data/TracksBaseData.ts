@@ -46,7 +46,7 @@ class TracksBaseData extends TracksData {
 
         // Extract required fields
         const song = track.name;
-        const artist = track.artists.map((artist: { name: string }) => artist.name).join(", "); // Join artist names
+        const artist: string = track.artists.map((artist: { name: string }) => artist.name).join(" & "); // Join artist names
         const popularity = track.popularity.toString();
         const duration_ms = track.duration_ms.toString();
         const album_type = track.album.album_type;
