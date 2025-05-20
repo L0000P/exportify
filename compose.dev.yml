@@ -1,0 +1,7 @@
+services:
+  exportify:
+    build:
+      context: .
+    container_name: exportify
+    ports:
+      - "3000:3000"
